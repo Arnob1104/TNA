@@ -12,8 +12,9 @@ jobs:
     steps:
       - name: Run TNA scan for all tenants
         run: |
-          curl -f -X POST "${{ secrets.BACKEND_URL }}/tna/scan-all" \
-            -H "X-Cron-Secret: ${{ secrets.CRON_SECRET }}"
+         curl -f -X POST "https://tna-k1t4.onrender.com/tna/scan-all" \
+           -H "Content-Type: application/json" \
+           -H "X-Cron-Secret: ${{ secrets.CRON_SECRET }}"
 
       - name: Ping Supabase to prevent free-tier pause
         run: |
