@@ -1,0 +1,21 @@
+name: daily-tna-scan
+
+on:
+  schedule:
+    # 03:00 UTC every day - adjust to your timezone's off-peak hours.
+    - cron: "0 3 * * *"
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run TNA scan for all tenants
+        run: |
+          curl -f -X POST "${{ secrets.BACKEND_URL }}/tna/scan-all" \
+            -H "X-Cron-Secret: ${{ secrets.CRON_SECRET }}"
+
+      - name: Ping Supabase to prevent free-tier pause
+        run: |
+          curl -f "${{ secrets.SUPABASE_URL }}/rest/v1/tenants?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}"
